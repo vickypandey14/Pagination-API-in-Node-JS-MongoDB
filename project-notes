@@ -1,4 +1,19 @@
-Work started
+Work started ----------
 
 Installed Packeges:
 Express, and Nodemon
+
+Work Progress Update on 17-04-2024:
+
+- Installed Extension: Rest Client
+- Created a new file: requests.Rest
+
+- Expanded the Node.js application to include pagination functionality for both users and posts APIs.
+
+- Created separate routes for users and posts endpoints, each serving paginated data.
+
+- Utilized a reusable middleware function `paginatedResults` to handle pagination logic for different data models.
+
+- Implemented asynchronous data fetching for both users and posts data from the JSONPlaceholder API.
+
+- Integrated pagination metadata (next and previous links) into the API responses for enhanced navigation.
