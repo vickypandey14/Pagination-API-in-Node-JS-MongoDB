@@ -1,19 +1,23 @@
 Work started ----------
 
-Installed Packeges:
-Express, and Nodemon
+Installed Packages:
+- Express
+- Mongoose
+- Nodemon
 
-Work Progress Update on 17-04-2024:
+Work Progress Update on 20-04-2024:
 
 - Installed Extension: Rest Client
 - Created a new file: requests.Rest
 
-- Expanded the Node.js application to include pagination functionality for both users and posts APIs.
+- Expanded the Node.js application to include pagination functionality for users.
 
-- Created separate routes for users and posts endpoints, each serving paginated data.
+- Implemented a reusable middleware function `paginatedResults` to handle pagination logic for different data models.
 
-- Utilized a reusable middleware function `paginatedResults` to handle pagination logic for different data models.
+- Connected the application to MongoDB and inserted dummy user data into the database.
 
-- Implemented asynchronous data fetching for both users and posts data from the JSONPlaceholder API.
+- Created a route for the users endpoint (`/users`) to serve paginated user data.
 
-- Integrated pagination metadata (next and previous links) into the API responses for enhanced navigation.
+- Enhanced API responses with pagination metadata (next and previous links) for improved navigation.
+
+Work Completed ----------

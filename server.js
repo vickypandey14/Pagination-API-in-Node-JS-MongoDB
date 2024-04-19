@@ -1,104 +1,90 @@
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')
-const User = require('./models/users')
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const User = require('./models/users');
+
+// Function to handle pagination
+
+function paginatedResults(model) {
+    return async (req, res, next) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const startIndex = (page - 1) * limit;
+
+        const results = {};
+
+        try {
+            const totalItems = await model.countDocuments().exec();
+
+            results.results = await model.find().limit(limit).skip(startIndex).exec();
+
+            const totalPages = Math.ceil(totalItems / limit);
+
+            results.pagination = {
+                currentPage: page,
+                totalPages: totalPages,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+            };
+
+            res.paginatedResults = results;
+            next();
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    };
+}
+
+// Connect to the database
 
 mongoose.connect('mongodb://localhost/pagination-api-nodejs')
-const db = mongoose.connection
+    .then(() => {
+        console.log('Connected to MongoDB');
 
-db.once('open', async() => {
-    if (await User.countDocuments(). exec() > 0) return
+        const dummyUsers = [
+            { name: 'Alice' },
+            { name: 'Bob' },
+            { name: 'Charlie' },
+            { name: 'David' },
+            { name: 'Eva' },
+            { name: 'Frank' },
+            { name: 'Grace' },
+            { name: 'Henry' },
+            { name: 'Ivy' },
+            { name: 'Jack' },
+            { name: 'Katie' },
+            { name: 'Leo' },
+            { name: 'Mia' },
+            { name: 'Nathan' },
+            { name: 'Olivia' },
+            { name: 'Peter' },
+            { name: 'Quinn' },
+            { name: 'Rachel' },
+            { name: 'Sam' },
+            { name: 'Tina' }
+        ];
 
-    Promise.all([
-        User.create({ name: 'User 1', }),
-        User.create({ name: 'User 2', }),
-        User.create({ name: 'User 3', }),
-        User.create({ name: 'User 4', }),
-        User.create({ name: 'User 5', }),
-        User.create({ name: 'User 6', }),
-        User.create({ name: 'User 7', }),
-        User.create({ name: 'User 8', }),
-        User.create({ name: 'User 9', }),
-        User.create({ name: 'User 10', }),
-        User.create({ name: 'User 11', }),
-        User.create({ name: 'User 12', })
-    ]).then(() => console.log('Added Users'))
-})
+        User.insertMany(dummyUsers)
+            .then(() => {
+                console.log('Dummy data inserted successfully');
+            })
+            .catch((error) => {
+                console.error('Error inserting dummy data:', error);
+            });
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+    });
+
 
 // for users API
 
-const users = [];
-
-fetch('https://jsonplaceholder.typicode.com/users')
-  .then(response => response.json())
-  .then(data => {
-    users.push(...data);
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-});
-
-
 app.get('/users', paginatedResults(User), (req, res) => {
-    res.json(res.paginatedResults)
-})
-
-
-// for posts API
-
-const posts = [];
-
-fetch('https://jsonplaceholder.typicode.com/posts')
-  .then(response => response.json())
-  .then(data => {
-    posts.push(...data);
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
+    res.json(res.paginatedResults);
 });
 
-app.get('/posts', paginatedResults(posts), (req, res) => {
-    res.json(res.paginatedResults)
-})
 
-
-function paginatedResults(model){
-    return async(req, res, next) => {
-        const page = parseInt(req.query.page)
-        const limit = parseInt(req.query.limit)
-
-        const startIndex = (page - 1) * limit
-        const endIndex = page * limit
-
-        const results = {}
-
-        // for the next page
-        
-        if (endIndex < model.length) {
-            results.next = {
-                page: page + 1,
-                limit: limit
-            }
-        }
-
-        // for the previous page
-        
-        if (startIndex > 0) {
-            results.previous = {
-                page: page - 1,
-                limit: limit
-            }
-        }
-
-        try {
-            results.results = await model.find().limit(limit).skip(startIndex).exec()
-            res.paginatedResults = results
-            next()
-        }
-        catch (error) {
-            res.status(500).json({ message: e.message })
-        }        
-    }
-}
-
-app.listen(3000)
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
