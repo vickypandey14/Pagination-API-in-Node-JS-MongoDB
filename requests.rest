@@ -1,6 +1,6 @@
 # For Posts API
-GET http://localhost:3000/posts?page=1&limit=10
+# GET http://localhost:3000/posts?page=1&limit=10
 
 
 # For Users API
-GET http://localhost:3000/users?page=2&limit=1
+GET http://localhost:3000/users?page=2&limit=3
